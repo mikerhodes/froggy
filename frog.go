@@ -16,11 +16,6 @@ func froggy(input []byte) bool {
 			continue
 		}
 
-		// Check whether we've managed to hop here
-		if len(states[i]) == 0 {
-			continue
-		}
-
 		for _, state := range states[i] {
 			// Test whether the largest of the possible numbers
 			// of hops from this location will take us
