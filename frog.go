@@ -31,10 +31,14 @@ package froggy
 
 func froggy(input []byte) bool {
 
-	states := make([][]int, len(input))
+	states := make([]map[int]bool, len(input))
+	for i := 0; i < len(input); i++ {
+		states[i] = make(map[int]bool)
+	}
 
-	// The first move is always going to be 1 to the first place.
-	states[0] = []int{1}
+	// The first move is always going to be 1 to the first place,
+	// so seed the states list with that first move.
+	states[0][1] = true
 
 	// rock := '*'
 	water := byte('~')
@@ -45,7 +49,7 @@ func froggy(input []byte) bool {
 			continue
 		}
 
-		for _, state := range states[i] {
+		for state, _ := range states[i] {
 			// Test whether the largest possible hop from this
 			// location will take us off the end of the river.
 			// This is our exit condition, and if we never hit
@@ -54,18 +58,14 @@ func froggy(input []byte) bool {
 				return true
 			}
 
-			// Otherwise, add the states that we can hop
-			// to to our state map, then continue to the
-			// next character
+			// We can hop one fewer places, the same places or one
+			// more space. Figure out where that puts us on the
+			// path, and store the new state (i.e., the (location,hops)
+			// pair, though the location is implicit in where we
+			// maintain the states set in the states array.
 			for _, hops := range []int{state - 1, state, state + 1} {
 				if hops > 0 { // state might be 1
-					loc := i + hops
-					// there's a question here of how likely
-					// we are to end up with duplicates by
-					// not checking for whether we already have
-					// this state. And if we don't, we'll just
-					// amplify that as we progress.
-					states[loc] = append(states[loc], hops)
+					states[i+hops][hops] = true
 				}
 			}
 		}
