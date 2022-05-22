@@ -1,6 +1,6 @@
 package froggy
 
-func froggy(input string) bool {
+func froggy(input []byte) bool {
 
 	states := make([][]int, len(input))
 
@@ -8,7 +8,7 @@ func froggy(input string) bool {
 	states[0] = []int{1}
 
 	// rock := '*'
-	water := '~'
+	water := byte('~')
 
 	for i, c := range input {
 		// The frog can't start a hop from water
@@ -21,20 +21,18 @@ func froggy(input string) bool {
 			continue
 		}
 
-		// Test whether the largest of the possible numbers
-		// of hops from this location will take us
-		// off the end of the river. This is our exit condition,
-		// and if we never hit it, we can't find an answer.
 		for _, state := range states[i] {
+			// Test whether the largest of the possible numbers
+			// of hops from this location will take us
+			// off the end of the river. This is our exit condition,
+			// and if we never hit it, we can't find an answer.
 			if i+state+1 >= len(input) {
 				return true
 			}
-		}
 
-		// Otherwise, add the states that we can hop
-		// to to our state map, then continue to the
-		// next character
-		for _, state := range states[i] {
+			// Otherwise, add the states that we can hop
+			// to to our state map, then continue to the
+			// next character
 			for _, hops := range []int{state - 1, state, state + 1} {
 				if hops > 0 { // state might be 1
 					loc := i + hops
