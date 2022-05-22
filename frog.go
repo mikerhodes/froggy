@@ -31,17 +31,23 @@ package froggy
 
 func froggy(input []byte) bool {
 
+	// rock := '*'
+	water := byte('~')
+
 	states := make([]map[int]bool, len(input))
 	for i := 0; i < len(input); i++ {
-		states[i] = make(map[int]bool)
+		// No need to store any states for water
+		// as we can't hop from water.
+		if input[i] != water {
+			states[i] = make(map[int]bool)
+		}
 	}
 
 	// The first move is always going to be 1 to the first place,
 	// so seed the states list with that first move.
-	states[0][1] = true
-
-	// rock := '*'
-	water := byte('~')
+	if states[0] != nil { // first state is water, so we always stop
+		states[0][1] = true
+	}
 
 	for i, c := range input {
 		// The frog can't start a hop from water
@@ -65,7 +71,10 @@ func froggy(input []byte) bool {
 			// maintain the states set in the states array.
 			for _, hops := range []int{state - 1, state, state + 1} {
 				if hops > 0 { // state might be 1
-					states[i+hops][hops] = true
+					newLoc := i + hops
+					if states[newLoc] != nil { // we have a nil where it's water
+						states[newLoc][hops] = true
+					}
 				}
 			}
 		}
